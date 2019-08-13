@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Caro2</title>
+    <style>
+        form {
+            margin: 0 auto;
+            background-color: skyblue;
+            width: 200px;
+            height: 100px;
+            text-align: center;
+        }
+
+
+        .center {
+            display: flex;
+            justify-content: center;
+
+        }
+
+        .square {
+            height: 50px;
+            width: 50px;
+            background-color: aquamarine;
+            text-align: center;
+            margin: 5px;
+            font-size: 35px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="form">
+        <form onSubmit="createGrid()">
+            Rows and columns: <br>
+            <input type="number" id="rows">
+            <br>
+            Consecutive titles: <br>
+            <input type="number" id="titles">
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <br><br>
+    <div id="parent">
+
+    </div>
+
+
+    <script>
+        let rows;
+        let consecutive;
+        let titleID = 0;
+        let parent = document.querySelector('#parent');
+        let xArray = [];
+        let oArray = [];
+        let squares;
+        let step = 0;
+
+        //create grid function
+        function createGrid() {
+            event.preventDefault();
+            rows = document.querySelector('#rows').value;
+            consecutive = document.querySelector('#titles').value;
+            for (let i = 0; i < rows; i++) {
+
+
+                //class for rows
+                let center = document.createElement('div');
+                center.className = "center";
+                center.setAttribute("row", i)
+                for (let j = 0; j < rows; j++) {
+                    let square = document.createElement('div');
+                    square.className = "square";
+                    square.id = titleID;
+                    let column = titleID % rows;
+                    square.setAttribute("column", column)
+                    titleID++;
+                    center.appendChild(square)
+                }
+                parent.appendChild(center);
+            }
+            squares = document.querySelectorAll('.square');
+            squares.forEach(square => square.addEventListener('click', createNewMove));
+
+        }
+        //end create grid function
+
+
+        //create move function
+        function createNewMove() {
+            if (this.innerHTML == "") {
+                if (step % 2 == 0) {
+                    this.innerHTML = "x";
+                    xArray.push(this.id);
+                    checkWin(this.id, 'x')
+
+                }
+                else {
+                    this.innerHTML = "o";
+                    oArray.push(this.id);
+                    // checkWin(this.id, 'o')
+                }
+
+            }
+            step++;
+        }
+        //end create move function
+
+
+        //check if x or o has won
+        function checkWin(index, symbol) {
+            let checkingTitle = document.getElementById(index)
+            //check row
+            let count_row = 0;
+            let checkingRow = checkingTitle.parentElement;
+
+            for (let i = 0; i < rows; i++) {
+                // console.log(checkingRow.getAttribute("row")*rows+i)
+                let symbolTitle = document.getElementById(parseInt(checkingRow.getAttribute("row")) * rows + i);
+                // console.log(symbolTitle.innerHTML)
+                if (symbolTitle.innerHTML == symbol) {
+                    count_row++;
+                }
+                else {
+                    count_row = 0;
+                }
+                if (count_row == consecutive) {
+                    alert(symbol + " win")
+                    return;
+                }
+            }
+
+            //check column
+            let count_col = 0;
+            for (let i = 0; i < rows; i++) {
+                let symbolTitle = document.getElementById(i * rows + parseInt(checkingTitle.getAttribute("column")));
+                if (symbolTitle.innerHTML == symbol) {
+                    count_col++;
+                }
+                else {
+                    count_col = 0;
+                }
+                if (count_col == consecutive) {
+                    alert(symbol + " win")
+                    return;
+                }
+            }
+
+
+            //check cheo 
+            let crossArr = [1];
+            let crossIndex = parseInt(index.slice());
+            let crossIndexDown = parseInt(index.slice());
+
+            // console.log("croos index co gia tri" + ((crossIndex - rows) - 1))
+            //check cheo len 
+            while (true) {
+
+
+                if (document.getElementById(((crossIndex - rows) - 1)) == null) {
+                    break;
+                }
+                if (document.getElementById(((crossIndex - rows) - 1)).innerHTML != symbol) {
+                    break;
+                }
+                crossArr.push(2);
+                crossIndex -= rows;
+                crossIndex--;
+            }
+            // console.log(crossArr)
+            //check cheo xuong
+            while (true) {
+
+                if (document.getElementById(((crossIndexDown + rows) + 1)) == null) {
+                    break;
+                }
+                if (document.getElementById(((crossIndexDown + rows) + 1)).innerHTML != symbol) {
+                    break;
+                }
+                crossArr.push(2);
+                crossIndexDown += rows;
+                crossIndex++;
+            }
+            if (crossArr.length >= consecutive) {
+                alert(symbol + " win")
+            }
+        }
+
+
+
+    </script>
+</body>
+
+</html>

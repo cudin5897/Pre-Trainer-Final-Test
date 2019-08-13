@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Grid</title>
+    <style>
+        form {
+            margin: 0 auto;
+            background-color: skyblue;
+            width: 200px;
+            height: 100px;
+            text-align: center;
+        }
+
+
+        .center {
+            display: flex;
+            justify-content: center;
+
+        }
+
+        .center1 {
+            display: flex;
+            justify-content: center;
+
+        }
+
+        .square {
+            height: 100px;
+            width: 100px;
+            background-color: aquamarine;
+            text-align: center;
+            margin: 5px;
+            font-size: 35px;
+        }
+
+        #parent {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="form">
+        <form onSubmit="createGrid()">
+            Rows: <br>
+            <input type="number" id="rows">
+            <br>
+            Columns: <br>
+            <input type="number" id="columns">
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <br>
+    <div id="parent">
+
+    </div>
+
+
+    <script>
+        let rows;
+        let columns;
+        let titleID = 0;
+        let parent = document.querySelector('#parent');
+        let squares;
+
+        let header;
+
+        let header_element;
+
+
+        //create grid function
+        function createGrid() {
+            event.preventDefault();
+            rows = document.querySelector('#rows').value;
+            columns = document.querySelector('#columns').value;
+
+            let center_div = document.createElement('div');
+            center_div.className = "center1";
+            for (let j = 0; j < columns; j++) {
+                let square = document.createElement('div');
+                square.className = "square";
+                center_div.appendChild(square);
+                square.setAttribute("col", j)
+                square.innerHTML = "col " + j + '<br><i style="font-size:24px" class="fa">&#xf0dc;</i>';
+            }
+            parent.appendChild(center_div);
+            for (let i = 0; i < rows; i++) {
+                //class for rows
+                let center = document.createElement('div');
+                center.className = "center";
+                center.setAttribute("row", i)
+                for (let j = 0; j < columns; j++) {
+                    let square = document.createElement('div');
+                    square.className = "square";
+                    square.id = titleID;
+                    square.setAttribute("column", j)
+                    square.setAttribute("row", i)
+                    titleID++;
+                    center.appendChild(square)
+                    var int = parseInt((Math.random() * 1000), 10)
+                    square.innerHTML = int;
+                }
+                parent.appendChild(center);
+            }
+            squares = document.querySelectorAll('.square');
+            header = document.querySelector('.center1');
+
+            header_element = header.querySelectorAll('.square');
+            
+            header_element.forEach(elem => elem.addEventListener('click', handleClick));
+
+        }
+
+        //sort function
+        function sortGrid(x) {
+            let gridNumber = document.querySelectorAll("div[column='" + x + "']");
+            var arrayOfGrid = Array.prototype.slice.call(gridNumber);
+            arrayOfGrid.sort(function (a, b) {
+                if (parseInt(a.textContent) > parseInt(b.textContent)) return 1
+                if (parseInt(a.textContent) < parseInt(b.textContent)) return -1
+                return 0;
+            });
+            let res_arr = arrayOfGrid.map(item => item.attributes['row'].value)
+
+            let row_element = document.querySelectorAll(".center");
+
+            row_element.forEach(item => {
+                for (let m = 0; m < res_arr.length; m++) {
+                    if (item.attributes['row'].value == res_arr[m]) {
+                        item.style.order = m;
+                    }
+                }
+            })
+            return res_arr
+        }
+
+        function handleClick(){
+            // alert('a')
+            console.log(this.attributes['col'].value)
+            sortGrid(this.attributes['col'].value);
+        }
+
+
+
+    </script>
+</body>
+
+</html>

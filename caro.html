@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Caro</title>
+    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .center {
+            display: flex;
+            justify-content: center;
+
+        }
+
+        .square {
+            height: 50px;
+            width: 50px;
+            background-color: aquamarine;
+            text-align: center;
+            margin: 5px;
+            font-size: 35px;
+        }
+
+        #result,
+        #reset {
+            
+            width: 80px;
+            height: 50px;
+            background-color: bisque;
+            margin: 10px;
+            text-align: center;
+            padding-top:10px;
+            visibility: hidden;
+        }
+        /* #reset{
+            visibility: hidden;
+            
+        } */
+    </style>
+</head>
+
+<body>
+    <div class="center">
+        <div class="square" id="0"></div>
+        <div class="square" id="1"></div>
+        <div class="square" id="2"></div>
+    </div>
+    <div class="center">
+        <div class="square" id="3"></div>
+        <div class="square" id="4"></div>
+        <div class="square" id="5"></div>
+    </div>
+    <div class="center">
+        <div class="square" id="6"></div>
+        <div class="square" id="7"></div>
+        <div class="square" id="8"></div>
+    </div>
+
+    <div class="center">
+        <div id="result">
+            result
+            
+        </div>
+        <div id="reset">
+            reset
+            <br>
+            <i class="fa fa-refresh fa-spin" style="font-size:24px"></i>
+        </div>
+    </div>
+
+
+    <script>
+
+        let step = 0;
+
+
+        const squares = document.querySelectorAll('.square');
+        const resultOutput = document.querySelector('#result');
+        const resetButton= document.querySelector('#reset');
+        let xArray = [];
+        let oArray = [];
+
+        //function create an X, O when click title
+        function createNewMove() {
+            if (this.innerHTML == "") {
+                if (step % 2 == 0) {
+                    this.innerHTML = "x";
+                    xArray.push(this.id);
+                    checkWin();
+                }
+                else {
+                    this.innerHTML = "o";
+                    oArray.push(this.id);
+                    checkWin();
+                }
+
+            }
+            step++;
+        }
+
+        //check full grid or not
+        function checkFull() {
+            for (let i = 0; i < squares.length; i++) {
+                if (squares[i].innerHTML == "") {
+                    return false
+                }
+            }
+            return true
+        }
+
+
+        //check if someone win or not
+        function checkWin() {
+            if (checkFull() == true) {
+                alert('full')
+            }
+            let winCondition = [
+                ["0", "1", "2"],
+                ["3", "4", "5"],
+                ["6", "7", "8"],
+                ["0", "3", "6"],
+                ["1", "4", "7"],
+                ["2", "5", "8"],
+                ["0", "4", "8"],
+                ["2", "4", "6"]
+            ]
+            //check if array sastisfy condition
+            let xResult = winCondition.map(item => {
+                //loop in xArray to get index of 
+                let xResArray = xArray.filter(x => item.includes(x))
+                return xResArray.length
+            })
+            if (xResult.includes(3)) {
+                resultOutput.innerHTML +="<br>";
+                resultOutput.innerHTML += "x win";
+                resultOutput.style.visibility="unset";
+                resetButton.style.visibility="unset";
+            }
+
+            //check if array sastisfy condition
+            let oResult = winCondition.map(item => {
+                //loop in yArray to get index of 
+                let oResArray = oArray.filter(o => item.includes(o))
+                return oResArray.length
+            })
+            if (oResult.includes(3)) {
+                resultOutput.innerHTML +="<br>";
+                resultOutput.innerHTML += "o win";
+                resultOutput.style.visibility="unset";
+                resetButton.style.visibility="unset";
+            }
+        }
+        
+        function reset(){
+            squares.forEach(square => square.innerHTML="");
+            xArray=[];
+            oArray=[];
+            resetButton.style.visibility="hidden";
+            resultOutput.style.visibility="hidden";
+            resultOutput.innerHTML="result";
+            step=0;
+        }
+        resetButton.addEventListener('click',reset);
+
+        squares.forEach(square => square.addEventListener('click', createNewMove));
+    </script>
+</body>
+
+</html>

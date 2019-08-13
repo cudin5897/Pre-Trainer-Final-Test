@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Grid</title>
+    <style>
+        .center {
+            display: flex;
+            justify-content: center;
+
+        }
+
+        .center1 {
+            display: flex;
+            justify-content: center;
+
+        }
+
+        .square {
+            height: 30px;
+            width: 30px;
+            background-color: aquamarine;
+            text-align: center;
+            margin: 2px;
+            font-size: 35px;
+        }
+
+        .highlight {
+            height: 30px;
+            width: 30px;
+            background-color: rgb(140, 127, 255);
+            text-align: center;
+            margin: 2px;
+            font-size: 35px;
+        }
+
+        .food {
+            height: 30px;
+            width: 30px;
+            background-color: rgb(243, 95, 26);
+            text-align: center;
+            margin: 2px;
+            font-size: 35px;
+        }
+
+
+        #parent {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="parent">
+
+    </div>
+
+
+    <script>
+        let titleID = 0;
+        let parent = document.querySelector('#parent');
+
+        //create grid function
+        createGrid();
+        function createGrid() {
+            for (let i = 0; i < 20; i++) {
+                //class for rows
+                let center = document.createElement('div');
+                center.className = "center";
+                center.setAttribute("row", i)
+                for (let j = 0; j < 20; j++) {
+                    let square = document.createElement('div');
+                    square.className = "square";
+                    square.id = titleID;
+                    square.setAttribute("column", j)
+                    square.setAttribute("row", i)
+                    titleID++;
+                    center.appendChild(square)
+                }
+                parent.appendChild(center);
+            }
+            squares = document.querySelectorAll('.square');
+
+        }
+        //end create grid function
+
+        //handle snake 
+        let size = 1;
+        let last_snake_size=1;
+        //ini first snake
+        let x = 0;
+        let y = 19;
+        let snake_body = document.querySelector(`[column="${x}"][row="${y}"]`);
+
+        let snake_size = 1;
+        let snake_arr = [snake_body]
+        snake_body.classList.add('highlight');
+        
+        let direction = "up";
+
+        function eatFood() {
+            if (x == food_coordinate[0] && y == food_coordinate[1]) {
+                let food_title = document.querySelector(`[column="${x}"][row="${y}"]`);
+                food_title.classList.remove('food');
+                food_coordinate = food();
+                snake_size++;
+            }
+        }
+
+
+
+        setInterval(function autoMove() {
+            if (direction == "up") {
+                if (y == 0) {
+                    y = 19
+                }
+                // if()
+                // console.log(snake_arr)
+                snake_body.classList.remove('highlight');
+                snake_arr.shift()
+                y--;
+                snake_body = document.querySelector(`[column="${x}"][row="${y}"]`);
+                snake_body.classList.add('highlight');
+                snake_arr.push(snake_body)
+                eatFood();
+            }
+            else if (direction == "left") {
+                if (x == 0) {
+                    x = 19;
+                }
+                snake_body.classList.remove('highlight');
+                x--;
+                snake_body = document.querySelector(`[column="${x}"][row="${y}"]`);
+                snake_body.classList.add('highlight');
+                eatFood()
+
+
+            }
+            else if (direction == "right") {
+                if (x == 19) {
+                    x = 0
+                }
+                snake_body.classList.remove('highlight');
+                x++;
+                snake_body = document.querySelector(`[column="${x}"][row="${y}"]`);
+                snake_body.classList.add('highlight');
+                eatFood()
+            }
+            else if (direction == "down") {
+                if (y == 19) {
+                    y = 0
+                }
+                snake_body.classList.remove('highlight');
+                y++;
+                snake_body = document.querySelector(`[column="${x}"][row="${y}"]`);
+                snake_body.classList.add('highlight');
+                eatFood()
+            }
+        }, 100)
+
+        function handleGo(e) {
+            // console.log(e.keyCode)
+            // const key = document.querySelector(`div[data-key="${e.keyCode}"]`);
+            if (e.keyCode == '39') {
+                direction = "right";
+            }
+            else if (e.keyCode == '38') {
+                direction = "up";
+            }
+            else if (e.keyCode == '37') {
+                direction = "left";
+            }
+            else if (e.keyCode == '40') {
+                direction = "down";
+            }
+
+        }
+        window.addEventListener('keydown', handleGo);
+
+        function food() {
+            let food_x = parseInt((Math.random() * 19), 10)
+            let food_y = parseInt((Math.random() * 19), 10)
+            let food_title = document.querySelector(`[column="${food_x}"][row="${food_y}"]`);
+            food_title.classList.add('food')
+            return [food_x, food_y]
+        }
+        let food_coordinate = food()
+        // console.log(food())
+
+
+    </script>
+</body>
+
+</html>
